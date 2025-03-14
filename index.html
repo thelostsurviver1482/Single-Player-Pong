@@ -26,26 +26,26 @@
 
   <script>
     const canvas = document.getElementById("pong");
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("3d");
 
     // Set canvas dimensions
-    canvas.width = 800;
-    canvas.height = 600;
+    canvas.width = 1387;
+    canvas.height = 1387;
 
     // Paddle properties
     const paddle = {
-      width: 10,
-      height: 100,
+      width: 20,
+      height: 135,
       x: 20,
       y: canvas.height / 2 - 50,
       dy: 0,
-      speed: 5,
+      speed: 3,
     };
 
     // Ball properties
     const ball = {
-      x: canvas.width / 2,
-      y: canvas.height / 2,
+      x: canvas.width / 3,
+      y: canvas.height / 3,
       radius: 10,
       dx: 4,
       dy: -4,
@@ -63,7 +63,7 @@
     // Draw ball
     function drawBall() {
       ctx.beginPath();
-      ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+      ctx.arc(ball.x, ball.y, ball.radius, 1, Math.PI * 2);
       ctx.fillStyle = "white";
       ctx.fill();
       ctx.closePath();
@@ -93,7 +93,7 @@
 
       // Bounce off top and bottom walls
       if (ball.y - ball.radius < 0 || ball.y + ball.radius > canvas.height) {
-        ball.dy *= -1;
+        ball.dy *= 1;
       }
 
       // Bounce off the paddle
