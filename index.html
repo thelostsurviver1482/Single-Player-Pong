@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>1-Player Pong</title>
+    <title>1-Player Pong: Unpredictable Edition</title>
     <style>
         body {
             margin: 0;
@@ -14,7 +14,6 @@
             height: 100vh;
             background-color: black;
         }
-
         canvas {
             border: 2px solid white;
         }
@@ -24,35 +23,29 @@
     <canvas id="pongCanvas"></canvas>
 
     <script>
-        // Set up canvas
         const canvas = document.getElementById('pongCanvas');
         const ctx = canvas.getContext('2d');
 
-        canvas.width = 800; // Width of the game area
-        canvas.height = 400; // Height of the game area
+        canvas.width = 800;
+        canvas.height = 400;
 
-        // Paddle properties
-        const paddleWidth = 10; // Width of the paddle
-        const paddleHeight = 100; // Height of the paddle
-        let paddleY = (canvas.height - paddleHeight) / 2; // Initial position of the paddle
+        const paddleWidth = 10;
+        const paddleHeight = 100;
+        let paddleY = (canvas.height - paddleHeight) / 2;
 
-        // Ball properties
-        const ballSize = 10; // Radius of the ball
-        let ballX = canvas.width / 2; // Initial X position of the ball
-        let ballY = canvas.height / 2; // Initial Y position of the ball
-        let ballSpeedX = 5; // Horizontal speed of the ball
-        let ballSpeedY = 5; // Vertical speed of the ball
+        const ballSize = 10;
+        let ballX = canvas.width / 2;
+        let ballY = canvas.height / 2;
+        let ballSpeedX = 5;
+        let ballSpeedY = 5;
 
-        // Score
         let score = 0;
 
-        // Draw paddle function
         function drawPaddle() {
             ctx.fillStyle = 'white';
             ctx.fillRect(0, paddleY, paddleWidth, paddleHeight);
         }
 
-        // Draw ball function
         function drawBall() {
             ctx.fillStyle = 'white';
             ctx.beginPath();
@@ -61,80 +54,78 @@
             ctx.closePath();
         }
 
-        // Draw score function
         function drawScore() {
             ctx.fillStyle = 'white';
             ctx.font = '24px Arial';
             ctx.fillText('Score: ' + score, canvas.width - 150, 30);
         }
 
-        // Update paddle position based on mouse movement
         function movePaddle(event) {
-            const rect = canvas.getBoundingClientRect(); // Get canvas bounds
-            const mouseY = event.clientY - rect.top; // Get mouse Y position relative to canvas
-            paddleY = Math.max(0, Math.min(canvas.height - paddleHeight, mouseY - paddleHeight / 2)); // Keep paddle within bounds
+            const rect = canvas.getBoundingClientRect();
+            const mouseY = event.clientY - rect.top;
+            paddleY = Math.max(0, Math.min(canvas.height - paddleHeight, mouseY - paddleHeight / 2));
         }
 
-        // Update ball position and check collisions
         function updateBall() {
             ballX += ballSpeedX;
             ballY += ballSpeedY;
 
-            // Ball collision with top and bottom walls
+            // Unpredictable bouncing off top and bottom walls
             if (ballY + ballSize > canvas.height || ballY - ballSize < 0) {
-                ballSpeedY *= -1; // Reverse vertical direction
+                ballSpeedY *= -1;
+                ballSpeedY += (Math.random() - 0.5) * 2; // Add random vertical speed
+                ballSpeedX += (Math.random() - 0.5) * 2; // Add random horizontal speed
             }
 
-            // Ball collision with the paddle
-            if (
-                ballX - ballSize < paddleWidth &&
-                ballY > paddleY &&
-                ballY < paddleY + paddleHeight
-            ) {
-                ballSpeedX *= -1; // Reverse horizontal direction
-                score++; // Increase score
+            // Unpredictable bouncing off the paddle
+            if (ballX - ballSize < paddleWidth && ballY > paddleY && ballY < paddleY + paddleHeight) {
+                ballSpeedX *= -1.1; // Increase horizontal speed
+                ballSpeedY += (Math.random() - 0.5) * 4; // Add significant random vertical speed
+                score++;
 
-                // Slightly increase speed for difficulty progression
-                ballSpeedX *= 1.05;
-                ballSpeedY *= 1.05;
+                // Ensure the ball doesn't get stuck moving vertically
+                if (Math.abs(ballSpeedX) < 3) {
+                    ballSpeedX = ballSpeedX < 0 ? -3 : 3;
+                }
             }
 
-            // Ball collision with right wall (bounce back)
+            // Unpredictable bouncing off right wall
             if (ballX + ballSize > canvas.width) {
-                ballSpeedX *= -1; // Reverse horizontal direction
+                ballSpeedX *= -1;
+                ballSpeedX += (Math.random() - 0.5) * 2; // Add random horizontal speed
+                ballSpeedY += (Math.random() - 0.5) * 2; // Add random vertical speed
             }
 
             // Ball goes past the left edge (game over)
             if (ballX - ballSize < 0) {
-                resetGame(); // Reset game state
+                resetGame();
             }
+
+            // Cap the ball speed to prevent it from becoming too fast
+            const maxSpeed = 15;
+            ballSpeedX = Math.max(Math.min(ballSpeedX, maxSpeed), -maxSpeed);
+            ballSpeedY = Math.max(Math.min(ballSpeedY, maxSpeed), -maxSpeed);
         }
 
-        // Reset game state when player loses
         function resetGame() {
-            score = 0; // Reset score to zero
-            ballX = canvas.width / 2; // Reset ball position to center X
-            ballY = canvas.height / 2; // Reset ball position to center Y
-            ballSpeedX = 5; // Reset horizontal speed of the ball
-            ballSpeedY = 5; // Reset vertical speed of the ball
+            score = 0;
+            ballX = canvas.width / 2;
+            ballY = canvas.height / 2;
+            ballSpeedX = 5 * (Math.random() > 0.5 ? 1 : -1);
+            ballSpeedY = 5 * (Math.random() > 0.5 ? 1 : -1);
         }
 
-        // Main game loop (updates and renders)
         function gameLoop() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear screen
-
-            drawPaddle(); // Draw the player's paddle
-            drawBall();   // Draw the bouncing ball
-            drawScore();  // Display current score
-
-            updateBall(); // Update game logic (ball movement and collisions)
-
-            requestAnimationFrame(gameLoop); // Repeat loop for smooth animation
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawPaddle();
+            drawBall();
+            drawScore();
+            updateBall();
+            requestAnimationFrame(gameLoop);
         }
 
-        canvas.addEventListener('mousemove', movePaddle); // Track mouse movement for paddle control
-
-        gameLoop(); // Start the game loop!
+        canvas.addEventListener('mousemove', movePaddle);
+        gameLoop();
     </script>
 </body>
 </html>
