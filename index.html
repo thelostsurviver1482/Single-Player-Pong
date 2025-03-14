@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>1-Player Pong</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #000;
+    }
+
+    canvas {
+      border: 2px solid white;
+      background-color: black;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="pong"></canvas>
+
+  <script>
+    const canvas = document.getElementById("pong");
+    const ctx = canvas.getContext("2d");
+
+    // Set canvas dimensions
+    canvas.width = 800;
+    canvas.height = 600;
+
+    // Paddle properties
+    const paddle = {
+      width: 10,
+      height: 100,
+      x: 20,
+      y: canvas.height / 2 - 50,
+      dy: 0,
+      speed: 5,
+    };
+
+    // Ball properties
+    const ball = {
+      x: canvas.width / 2,
+      y: canvas.height / 2,
+      radius: 10,
+      dx: 4,
+      dy: -4,
+    };
+
+    // Score
+    let score = 0;
+
+    // Draw paddle
+    function drawPaddle() {
+      ctx.fillStyle = "white";
+      ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
+    }
+
+    // Draw ball
+    function drawBall() {
+      ctx.beginPath();
+      ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+      ctx.fillStyle = "white";
+      ctx.fill();
+      ctx.closePath();
+    }
+
+    // Draw score
+    function drawScore() {
+      ctx.font = "20px Arial";
+      ctx.fillStyle = "white";
+      ctx.fillText(`Score: ${score}`, canvas.width - 120, 30);
+    }
+
+    // Move paddle
+    function movePaddle() {
+      paddle.y += paddle.dy;
+
+      // Prevent the paddle from going out of bounds
+      if (paddle.y < 0) paddle.y = 0;
+      if (paddle.y + paddle.height > canvas.height)
+        paddle.y = canvas.height - paddle.height;
+    }
+
+    // Move ball
+    function moveBall() {
+      ball.x += ball.dx;
+      ball.y += ball.dy;
+
+      // Bounce off top and bottom walls
+      if (ball.y - ball.radius < 0 || ball.y + ball.radius > canvas.height) {
+        ball.dy *= -1;
+      }
+
+      // Bounce off the paddle
+      if (
+        ball.x - ball.radius < paddle.x + paddle.width &&
+        ball.y > paddle.y &&
+        ball.y < paddle.y + paddle.height
+      ) {
+        ball.dx *= -1; // Reverse horizontal direction
+        score++; // Increase score
+        // Slightly increase speed for difficulty
+        ball.dx *= 1.05;
+        ball.dy *= 1.05;
+      }
+
+      // Reset if the ball goes out of bounds
+      if (ball.x + ball.radius < 0) {
+        resetGame();
+      }
+    }
+
+    // Reset game
+    function resetGame() {
+      score = 0;
+      ball.x = canvas.width / 2;
+      ball.y = canvas.height / 2;
+      ball.dx = 4;
+      ball.dy = -4;
+    }
+
+    // Update game state
+    function update() {
+      movePaddle();
+      moveBall();
+    }
+
+    // Render everything
+    function render() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      drawPaddle();
+      drawBall();
+      
+drawScore();
+}
+
+function gameLoop() {update();render();requestAnimationFrame(gameLoop);}document.addEventListener("keydown", (e) => {if (e.key === "ArrowUp") {paddle.dy = -paddle.speed;} else if (e.key === "ArrowDown") {paddle.dy = paddle.speed;}});document.addEventListener("keyup", () => {paddle.dy =
+	
